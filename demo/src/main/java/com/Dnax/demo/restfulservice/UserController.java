@@ -2,7 +2,6 @@ package com.Dnax.demo.restfulservice;
 
 import com.Dnax.demo.entity.Department;
 import com.Dnax.demo.entity.User;
-import com.Dnax.demo.logic.GreetingLogicInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,9 +20,9 @@ public class UserController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
+    //@Autowired
     // @Qualifier("englishGreeting")
-    public GreetingLogicInterface GreetingLogic = null;
+   // public GreetingLogicInterface GreetingLogic = null;
 
     @Autowired
     public JpaRepository<User, Integer> userRepository = null;

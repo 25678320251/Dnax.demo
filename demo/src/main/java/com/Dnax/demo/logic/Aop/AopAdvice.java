@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AopAdvice {
 
-    @Pointcut("execution (* com.liujinhang.demo.logic.*.sayGreeting(String))")
+    @Pointcut("execution (* com.Dnax.demo.logic.*.sayGreeting(String))")
     public void sayGreeting() {}
 
     @Before("sayGreeting()")

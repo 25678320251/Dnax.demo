@@ -1,4 +1,4 @@
-package com.Dnax.demo.repository.jpa;
+package com.Dnax.demo.dao.jpa;
 
 import com.Dnax.demo.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;

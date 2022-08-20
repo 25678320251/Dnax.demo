@@ -1,103 +1,81 @@
-let baseURI = 'http://localhost:8080/';
+let baseURL = "http://localhost:8080/";
 
-function isNotEmptyString(str){
-    if(
-        str == undefined ||
-        str == null ||
-        $.trim(str) == ''){
+function dataToHtml(permissions, listPermissions) {
 
-        return false;
-    }
-    return true;
+  listPermissions.empty();
+
+  permissions.forEach(permission => {
+
+    let permissionHtml = $("#templatePermission").clone();
+
+    permissionHtml.find(".header")[0].innerText = permission.department.name;
+    permissionHtml.find(".description")[0].innerText = permission.permissionType;
+
+    listPermissions.append(permissionHtml);
+
+  });
 }
 
 $(document).ready(function () {
 
-    $("#btnGetUser").click(function (e) {
-        e.preventDefault();
+  $('#btnCheck').click(function (e) {
+    e.preventDefault();
 
-        if (isNotEmptyString($('#txtId').val()) == false) {
-            window.alert('id can not be empty.')
-            return;
-        }
+    let id = $('#txtId').val();
 
-        $.get(baseURI + "users/" + $('#txtId').val(),
-            function (user, textStatus, jqXHR) {
-                $('#txtName').val(user.name);
-                $("#message").val("user " + user.id + " existed.");
-            },
-            "json"
-        );
+    if(id == undefined || id == null || id == NaN || id.trim() == ""){
+      $("#message").text('Please enter your id.');
+      return false;
+    }
 
+    $.ajax({
+      type: "get",
+      url: baseURL + "user/" + id,
+      dataType: "json",
+      success: function (user) {
+
+        dataToHtml(user.permissions, $("#listPermissions"));
+
+      },
+      error: function (response) {
+        $("#message").text(response.responseJSON.message);
+      }
     });
 
-    $('#btnCreateUser').click(function (e) {
+  });
+
+  $('.ui.form')
+    .form({
+      fields: {
+        id: {
+          identifier: 'txtFormId',
+          rules: [
+            {
+              type: 'empty',
+              prompt: 'Please enter your id.'
+            }
+          ]
+        }
+      },
+      onSuccess: function (e) {
         e.preventDefault();
 
-        if (isNotEmptyString($('#txtName').val()) == false) {
-            window.alert('name can not be empty.')
-            return;
-        }
-
-        var newUser = {
-            "name": $("#txtName").val(),
-            "department": baseURI + "departments/1"
-        }
+        let id = $('#txtFormId').val();
 
         $.ajax({
-            type: "POST",
-            url: baseURI + "users",
-            data: JSON.stringify(newUser),
-            contentType: 'application/json',
-            success: function (user) {
+          type: "get",
+          url: baseURL + "user/" + id,
+          dataType: "json",
+          success: function (user) {
 
-                $('#txtId').val(user.id);
-                $("#message").val("user " + user.id + " created.");
+            dataToHtml(user.permissions, $("#listFormPermissions"));
 
-            }
+          },
+          error: function (response) {
+            console.log(response);
+          }
         });
-    });
-
-    $('#btnModifyUser').click(function (e) {
-        e.preventDefault();
-
-        if (isNotEmptyString($('#txtId').val()) == false) {
-            window.alert('id can not be empty.')
-            return;
-        }
-
-        $.get(baseURI + "users/" + $('#txtId').val(),
-            function (data) {
-
-                var modifedUser = {
-                    "name": $("#txtName").val()
-                }
-
-                $.ajax({
-                    type: "PUT",
-                    url: baseURI + "users/" + $('#txtId').val(),
-                    data: JSON.stringify(modifedUser),
-                    contentType: 'application/json',
-                    success: function (user) {
-                        $("#message").val("user " + user.id + " modified.");
-                    }
-                });
-            }
-        )
-    });
-
-    $('#btnRemoveUser').click(function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            type: "DELETE",
-            url: baseURI + "users/" + $('#txtId').val(),
-            success: function (response) {
-                $("#message").val("user " + $('#txtId').val() + " removed.");
-                $('#txtId').val('');
-                $('#txtName').val('');
-            }
-        });
+      }
     });
 
 });
